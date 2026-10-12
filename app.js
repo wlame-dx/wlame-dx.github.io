@@ -40,6 +40,7 @@ const I18N = {
     "card.fork": "Fork",
     "card.archived": "Arşiv",
     "card.updated": "Güncellendi {n} {unit} önce",
+    "card.site": "Site",
     "time.justNow": "az önce",
     "error.title": "Veriler yüklenemedi",
     "error.viewProfile": "Doğrudan GitHub profilini görüntüle:",
@@ -81,6 +82,7 @@ const I18N = {
     "card.fork": "Fork",
     "card.archived": "Archived",
     "card.updated": "Updated {n} {unit} ago",
+    "card.site": "Site",
     "time.justNow": "just now",
     "error.title": "Failed to load data",
     "error.viewProfile": "View the GitHub profile directly:",
@@ -133,6 +135,7 @@ const state = {
   query: "",
   sort: "updated",
   lang: "all", // repo dili filtresi (state.lang; diller üstündeki uiLang'den ayrı)
+  pages: {}, // repo → live Pages cache'i (promise'lar)
 };
 let lastError = null; // dil değişince hatayı yeniden görmek için
 
@@ -434,11 +437,8 @@ function render() {
 }
 
 function makeCard(repo, index) {
-  const card = document.createElement("a");
+  const card = document.createElement("div");
   card.className = "card";
-  card.href = repo.html_url;
-  card.target = "_blank";
-  card.rel = "noopener";
   card.style.animationDelay = `${Math.min(index * 45, 500)}ms`;
 
   const desc = repo.description
@@ -448,10 +448,10 @@ function makeCard(repo, index) {
 
   card.innerHTML = `
     <div class="card-top">
-      <span class="card-name">
+      <a class="card-name" href="${repo.html_url}" target="_blank" rel="noopener">
         <svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"/></svg>
         ${escapeHtml(repo.name)}
-      </span>
+      </a>
       ${repo.fork ? `<span class="badge">${escapeHtml(t("card.fork"))}</span>` : repo.archived ? `<span class="badge">${escapeHtml(t("card.archived"))}</span>` : ""}
     </div>
     <p class="card-desc ${repo.description ? "" : "empty"}">${desc}</p>
@@ -470,7 +470,66 @@ function makeCard(repo, index) {
     card.style.setProperty("--my", `${e.clientY - r.top}px`);
   });
 
+  // Kartın boş kısmına tıklayınca repoyu aç (içteki linkler normal çalışır)
+  card.addEventListener("click", (e) => {
+    if (e.target.closest("a")) return;
+    window.open(repo.html_url, "_blank", "noopener");
+  });
+
+  // Repo canlı bir GitHub Pages sitesine sahipse "Site" düğmesi ekle
+  pageCheck(card, repo);
+
   return card;
+}
+
+/* ---------- GitHub Pages tespiti ---------- */
+function pagesUrl(repo) {
+  const lower = USERNAME.toLowerCase();
+  if (repo.name.toLowerCase() === `${lower}.github.io`) {
+    return `https://${lower}.github.io/`;
+  }
+  return `https://${lower}.github.io/${repo.name}/`;
+}
+
+// GitHub Pages doğrulaması: site yaşıyor mu? İlk veri yığınını okuyup boyutuna
+// bakarız — 404'ler ya da boş yanıtlar (3 bayt gibi) gerçek site sayılmaz.
+function hasLiveSite(url) {
+  if (!(url in state.pages)) {
+    state.pages[url] = (async () => {
+      try {
+        const res = await fetch(url, { mode: "cors" });
+        if (!res.ok) return false;
+        const reader = res.body && res.body.getReader ? res.body.getReader() : null;
+        if (reader) {
+          const { value } = await reader.read();
+          reader.cancel().catch(() => {});
+          return !!(value && value.length > 500);
+        }
+        const text = await res.text();
+        return text.length > 500;
+      } catch {
+        return false;
+      }
+    })();
+  }
+  return state.pages[url];
+}
+
+async function pageCheck(card, repo) {
+  const url = pagesUrl(repo);
+  const live = await hasLiveSite(url).catch(() => false);
+  if (!live || !card.isConnected) return;
+
+  const meta = card.querySelector(".card-meta");
+  if (!meta) return;
+
+  const link = document.createElement("a");
+  link.className = "site-chip";
+  link.href = url;
+  link.target = "_blank";
+  link.rel = "noopener";
+  link.textContent = `🌐 ${t("card.site")}`;
+  meta.insertBefore(link, meta.firstChild);
 }
 
 /* ---------- Durum ekranları ---------- */

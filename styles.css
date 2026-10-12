@@ -337,6 +337,7 @@ a { color: inherit; text-decoration: none; }
   background:
     linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.012));
   overflow: hidden;
+  cursor: pointer;
   transition: transform 0.25s cubic-bezier(0.22,1,0.36,1), border-color 0.25s, box-shadow 0.25s;
   animation: rise 0.5s ease both;
 }
@@ -365,9 +366,29 @@ a { color: inherit; text-decoration: none; }
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  color: var(--text);
 }
 .card-name svg { color: var(--text-dim-2); flex-shrink: 0; }
 .card-name:hover { color: #fff; }
+
+.site-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--line-strong);
+  padding: 4px 10px;
+  border-radius: 999px;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+.site-chip:hover {
+  background: rgba(255, 255, 255, 0.13);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+}
 .badge {
   font-size: 10.5px;
   font-weight: 600;
