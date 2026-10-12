@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wlâme · GitHub Projeleri</title>
+  <meta name="description" content="Wlâme'nin tüm public GitHub projeleri — siyah-gri geçişli modern bir vitrin." />
+  <script>
+    // İlk boyama öncesi: tarayıcı diline göre <html lang> belirle
+    (function () {
+      var saved = localStorage.getItem("wlame-lang");
+      var l = saved === "tr" || saved === "en"
+        ? saved
+        : (navigator.language || "en").toLowerCase().indexOf("tr") === 0 ? "tr" : "en";
+      document.documentElement.lang = l;
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/179619526?v=4" />
+  <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/179619526?v=4" />
+</head>
+<body>
+  <!-- Arkaplan efekt katmanları -->
+  <div class="bg-layer" aria-hidden="true">
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+    <div class="grid-overlay"></div>
+    <div class="noise"></div>
+  </div>
+
+  <header class="nav">
+    <a class="brand" href="#" aria-label="Ana sayfa" data-i18n-aria="nav.home">
+      <span class="brand-mark">W</span>
+      <span class="brand-text">wlame<span class="brand-dim">.dx</span></span>
+    </a>
+    <nav class="nav-links">
+      <div class="lang-switch" role="group" aria-label="Dil / Language" data-i18n-aria="nav.language">
+        <button class="lang-btn" data-lang="tr" aria-pressed="false">TR</button>
+        <button class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
+      </div>
+      <a href="#about" data-i18n="nav.about">Hakkında</a>
+      <a href="#projects" data-i18n="nav.projects">Projeler</a>
+      <a class="btn-ghost" id="profileLink" href="https://github.com/wlame-dx" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        GitHub
+      </a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="avatar-wrap">
+        <img id="avatar" class="avatar" alt="Wlâme profil fotoğrafı" src="https://avatars.githubusercontent.com/u/179619526?v=4" referrerpolicy="no-referrer" />
+        <span class="avatar-ring" aria-hidden="true"></span>
+      </div>
+      <h1 class="hero-title" id="displayName">Wlâme</h1>
+      <p class="hero-sub" id="bio">Developer</p>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num" id="repoCount">–</span><span class="stat-label" data-i18n="hero.stat.repo">Repo</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num" id="starCount">–</span><span class="stat-label" data-i18n="hero.stat.stars">Yıldız</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num" id="followerCount">–</span><span class="stat-label" data-i18n="hero.stat.followers">Takipçi</span></div>
+      </div>
+    </section>
+
+    <!-- HAKKINDA / README -->
+    <section id="about" class="about">
+      <div class="section-head">
+        <h2 data-i18n="about.title">Hakkında</h2>
+        <a class="readme-source" id="readmeSource" href="https://github.com/wlame-dx/wlame-dx" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"/></svg>
+          README.md
+        </a>
+      </div>
+      <div class="readme-wrap collapsed" id="readmeWrap">
+        <article id="readme" class="readme markdown-body">
+          <div class="state-box"><div class="spinner"></div><p data-i18n="readme.loading">README yükleniyor...</p></div>
+        </article>
+      </div>
+      <button class="readme-toggle" id="readmeToggle" hidden>
+        <span class="readme-toggle-text" data-i18n="readme.more">Devamını oku</span>
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+    </section>
+
+    <!-- PROJELER -->
+    <section id="projects" class="projects">
+      <div class="section-head">
+        <h2 data-i18n="projects.title">Projeler</h2>
+        <div class="controls">
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input id="search" type="search" placeholder="Proje ara..." autocomplete="off" data-i18n-placeholder="search.placeholder" />
+          </div>
+          <div class="select-box">
+            <select id="sort" aria-label="Sıralama" data-i18n-aria="sort.label">
+              <option value="updated" data-i18n="sort.updated">Son güncellenen</option>
+              <option value="stars" data-i18n="sort.stars">En çok yıldız</option>
+              <option value="name" data-i18n="sort.name">İsim (A-Z)</option>
+              <option value="created" data-i18n="sort.created">En yeni</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div id="langFilters" class="lang-filters"></div>
+
+      <div id="repoGrid" class="repo-grid" aria-live="polite"></div>
+
+      <div id="stateBox" class="state-box">
+        <div class="spinner"></div>
+        <p data-i18n="state.loading">Projeler yükleniyor...</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>
+      <span class="footer-name">Wlâme</span> ·
+      <a href="https://github.com/wlame-dx" target="_blank" rel="noopener">github.com/wlame-dx</a>
+    </p>
+    <p class="footer-dim" data-i18n="footer.api">Canlı GitHub API · GitHub Pages</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
