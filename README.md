@@ -1,5 +1,7 @@
 # Wlâme · GitHub Vitrini
 
+> 🔗 **Canlı:** https://wlame-dx.github.io/
+
 Tüm **public GitHub projelerini** otomatik gösteren, siyah-gri geçişli modern
 tek sayfalık web sitesi. Repolar **canlı GitHub API** üzerinden çekilir; yeni bir
 public repo açtığında sayfada kendiliğinden görünür — kod değiştirmen gerekmez.
