@@ -41,6 +41,7 @@ const I18N = {
     "card.archived": "Arşiv",
     "card.updated": "Güncellendi {n} {unit} önce",
     "card.site": "Site",
+    "refreshBtn": "Yenile",
     "time.justNow": "az önce",
     "error.title": "Veriler yüklenemedi",
     "error.viewProfile": "Doğrudan GitHub profilini görüntüle:",
@@ -83,6 +84,7 @@ const I18N = {
     "card.archived": "Archived",
     "card.updated": "Updated {n} {unit} ago",
     "card.site": "Site",
+    "refreshBtn": "Refresh",
     "time.justNow": "just now",
     "error.title": "Failed to load data",
     "error.viewProfile": "View the GitHub profile directly:",
@@ -126,6 +128,7 @@ const els = {
   readme: document.getElementById("readme"),
   readmeWrap: document.getElementById("readmeWrap"),
   readmeToggle: document.getElementById("readmeToggle"),
+  refreshBtn: document.getElementById("refreshBtn"),
 };
 
 /* ---------- Durum ---------- */
@@ -439,6 +442,7 @@ function render() {
 function makeCard(repo, index) {
   const card = document.createElement("div");
   card.className = "card";
+  card.dataset.repo = repo.name;
   card.style.animationDelay = `${Math.min(index * 45, 500)}ms`;
 
   const desc = repo.description
@@ -493,7 +497,9 @@ function pagesUrl(repo) {
 
 // GitHub Pages doğrulaması: site yaşıyor mu? İlk veri yığınını okuyup boyutuna
 // bakarız — 404'ler ya da boş yanıtlar (3 bayt gibi) gerçek site sayılmaz.
-function hasLiveSite(url) {
+// force=true ise önbelleği atlayıp yeniden kontrol eder (yeni açılan Pages siteleri).
+function hasLiveSite(url, force) {
+  if (force) delete state.pages[url];
   if (!(url in state.pages)) {
     state.pages[url] = (async () => {
       try {
@@ -515,9 +521,9 @@ function hasLiveSite(url) {
   return state.pages[url];
 }
 
-async function pageCheck(card, repo) {
+async function pageCheck(card, repo, force) {
   const url = pagesUrl(repo);
-  const live = await hasLiveSite(url).catch(() => false);
+  const live = await hasLiveSite(url, force).catch(() => false);
   if (!live || !card.isConnected) return;
 
   const meta = card.querySelector(".card-meta");
@@ -530,6 +536,43 @@ async function pageCheck(card, repo) {
   link.rel = "noopener";
   link.textContent = `🌐 ${t("card.site")}`;
   meta.insertBefore(link, meta.firstChild);
+}
+
+// Görünür kartlarda henüz düğmesi olmayanlar için Pages kontrolünü zorla tazele.
+// Yeni açılan bir Pages sitesi bu sayede sayfayı yenilemeden belirir.
+function refreshPageStatus() {
+  if (document.visibilityState === "hidden") return;
+  document.querySelectorAll(".card").forEach((card) => {
+    const name = card.dataset.repo;
+    if (!name || card.querySelector(".site-chip")) return;
+    const repo = state.repos.find((r) => r.name === name);
+    if (repo) pageCheck(card, repo, true);
+  });
+}
+
+// Repo listesini GitHub'dan tazele (elle tetiklenir — API limitine saygı).
+let refreshing = false;
+async function refreshData() {
+  if (refreshing) return;
+  refreshing = true;
+  els.refreshBtn.classList.add("loading");
+  try {
+    const [user, repos] = await Promise.all([
+      fetchJson(`${API}/users/${USERNAME}`),
+      fetchJson(`${API}/users/${USERNAME}/repos?per_page=100&sort=updated`),
+    ]);
+    state.user = user;
+    state.repos = repos.filter((r) => !r.private).sort((a, b) => new Date(b.pushed_at) - new Date(a.pushed_at));
+    renderProfile();
+    buildLangFilters();
+    render();
+    refreshPageStatus();
+  } catch (err) {
+    showError(err);
+  } finally {
+    refreshing = false;
+    els.refreshBtn.classList.remove("loading");
+  }
 }
 
 /* ---------- Durum ekranları ---------- */
@@ -570,6 +613,11 @@ els.sort.addEventListener("change", (e) => {
 document.querySelectorAll(".lang-btn").forEach((b) => {
   b.addEventListener("click", () => setLanguage(b.dataset.lang));
 });
+els.refreshBtn && els.refreshBtn.addEventListener("click", refreshData);
+
+// Yeni açılan Pages sitelerinin düğmesini sayfayı yenilemeden göstermek için
+// periyodik kontrol (github.io istekleri API limiti yemez).
+setInterval(refreshPageStatus, 60000);
 
 /* ---------- Başlat ---------- */
 applyStaticI18n();
