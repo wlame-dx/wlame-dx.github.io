@@ -13,6 +13,7 @@ public repo açtığında sayfada kendiliğinden görünür — kod değiştirme
 - 🔎 Anlık arama + sıralama (son güncellenen, yıldız, isim, en yeni)
 - 🏷️ Dile göre filtre çipleri (renk kodlu)
 - 🃏 Fareyi takip eden ışıklı repo kartları; dil, yıldız, fork ve güncelleme zamanı
+- 🌐 Reposunda **canlı Pages sitesi** olan kartlara otomatik "Site" düğmesi (sahte/404 sayfalar tespit edilip eklenmez)
 - 📱 Mobil uyumlu, karanlık tema
 - ⚡ Sıfır bağımlılık (framework yok, sadece HTML + CSS + JS)
 
